@@ -325,3 +325,53 @@ class ILI9341:
                     curx = self.chars(word+' ', curx,cury)
             curx = self._x; cury = self.next_line(cury,char_h)
         self._y = cury
+
+    def draw_line(self, x0, y0, x1, y1, color):
+        dx = x1 - x0
+        dy = y1 - y0
+        for x in range(x0 , x1):
+            y = y1 + dy * (x - x1) / dx
+            self.pixel(int(x), int(y),color)
+
+    def draw_square(self, x,y,width,color):
+        for w in range(0,width):
+            self.pixel(x+w,y,color)
+            self.pixel(x,y+w,color)
+            self.pixel(x+width,y+w,color)
+            self.pixel(x+w,y+width,color)
+    
+    def draw_rectangle(self, x,y,width,height,color):
+        for w in range(0,width):
+            self.pixel(x+w,y,color)
+            self.pixel(x+w,y+height,color)
+        for h in range(0,height):
+            self.pixel(x,y+h,color)
+            self.pixel(x+width,y+h,color)
+
+    def draw_circle(self, xpos0, ypos0, rad, color):
+        x = rad - 1
+        y = 0
+        dx = 1
+        dy = 1
+        err = dx - (rad << 1)
+        while x >= y:
+            self.pixel(xpos0 + x, ypos0 + y, color)
+            self.pixel(xpos0 + y, ypos0 + x, color)
+            self.pixel(xpos0 - y, ypos0 + x, color)
+            self.pixel(xpos0 - x, ypos0 + y, color)
+            self.pixel(xpos0 - x, ypos0 - y, color)
+            self.pixel(xpos0 - y, ypos0 - x, color)
+            self.pixel(xpos0 + y, ypos0 - x, color)
+            self.pixel(xpos0 + x, ypos0 - y, color)
+            if err <= 0:
+                y += 1
+                err += dy
+                dy += 2
+            if err > 0:
+                x -= 1
+                dx += 2
+                err += dx - (rad << 1)
+
+    def draw_filled_circle(self, x, y, rad, color):
+        for r in range(rad,0,-1):
+            self.draw_circle(x, y, r, color)
